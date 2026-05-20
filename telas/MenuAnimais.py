@@ -118,7 +118,7 @@ class MenuAnimais(ctk.CTkFrame):
             messagebox.showinfo("Aviso", "Animal não encontrado!")
             return
     
-        informacao_animal(self, dados_animal)
+        informacao_animal(self, dados_animal, self)
     
     def deletar_animal(self):
         selecao = self.tabela.selection()
@@ -137,7 +137,7 @@ class MenuAnimais(ctk.CTkFrame):
         if confirmar:
             try:
                 cursor = self.conn.cursor()
-                cursor.execute("DELETE FROM animais WHERE id = ?", (id_animal,))
+                cursor.execute("UPDATE animais SET ativo = 0 WHERE id = ?", (id_animal,))
                 self.conn.commit()
                 
                 #  Remove da interface e avisa o usuário

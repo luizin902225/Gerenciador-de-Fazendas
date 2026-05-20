@@ -65,6 +65,7 @@ class App(ctk.CTk):
             ("Funcionários", lambda: print("Funcionários"), MENU_LATERAL, "w"),
             ("Estoque", lambda: print("Estoque"), MENU_LATERAL, "w"),
             ("Plantações", lambda: print("Plantações"), MENU_LATERAL, "w"),
+            ("Produtores Rurais", lambda: print("Produtores"), MENU_LATERAL, "w"),
             ("Sair", lambda: self.destroy(), "red", "center")
         ]
             
