@@ -1,5 +1,6 @@
 from banco.database import conectar, criar_tabelas
 from telas.Dashboard import *
+from telas.login import *
 import customtkinter as ctk
 
 def main():
@@ -7,6 +8,8 @@ def main():
     criar_tabelas(conn)
     
     app = App(conn)
+    
+    #app = Login(conn)
     app.mainloop()
     
     conn.close()

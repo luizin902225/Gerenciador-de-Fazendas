@@ -3,13 +3,45 @@ import customtkinter as ctk
 from tkinter import ttk, messagebox
 from funcoes.animais import novo_animal, atualizar_tabela_animais, buscar_animais, informacao_animal
 # Paleta de Cores
-FUNDO = "#F5F7FA"
-MENU_LATERAL = "#1E293B"
-BOTOES = "#2563EB"
-CARDS = "#FFFFFF"
+FUNDO = "#F8FAFC"              # Fundo geral
+MENU_LATERAL = "#E2E8F0"       # Sidebar
+TOPO = "#FFFFFF"               # Barra superior
+
+CARDS = "#FFFFFF"              # Cards
+CARD_HOVER = "#F1F5F9"
+
 TABELAS = "#FFFFFF"
-HOVER_TABELA = "#EFF6FF"
-TEXTO = "black"
+LINHA_PAR = "#F8FAFC"
+LINHA_IMPAR = "#EEF2F7"
+HOVER_TABELA = "#DBEAFE"
+
+BOTOES = "#2563EB"             # Azul principal
+BOTOES_HOVER = "#1D4ED8"
+
+BOTAO_SUCESSO = "#16A34A"
+BOTAO_SUCESSO_HOVER = "#15803D"
+
+BOTAO_ALERTA = "#D97706"
+BOTAO_ALERTA_HOVER = "#B45309"
+
+BOTAO_ERRO = "#DC2626"
+BOTAO_ERRO_HOVER = "#B91C1C"
+
+INPUT = "#FFFFFF"
+INPUT_BORDA = "#CBD5E1"
+INPUT_FOCUS = "#93C5FD"
+
+TEXTO = "#0F172A"
+TEXTO_SECUNDARIO = "#475569"
+TEXTO_PLACEHOLDER = "#94A3B8"
+
+DIVISORIA = "#E2E8F0"
+
+SUCESSO = "#22C55E"
+ERRO = "#EF4444"
+AVISO = "#F59E0B"
+
+SCROLLBAR = "#CBD5E1"
 
 class MenuAnimais(ctk.CTkFrame):
     def __init__(self, parent, controller):
@@ -27,13 +59,13 @@ class MenuAnimais(ctk.CTkFrame):
         
         # Titulo
         
-        titulo_pagina = ctk.CTkLabel(topo, text="Gerenciador de Animais", fg_color="transparent", font=("Inter", 20, "bold"), text_color="white")
+        titulo_pagina = ctk.CTkLabel(topo, text="Gerenciador de Animais", fg_color="transparent", font=("Inter", 20, "bold"), text_color=TEXTO)
         titulo_pagina.place(anchor="center", relx=0.5, rely=0.5)
         
         # Topo Pesquisa
-        pesquisa_titulo = ctk.CTkLabel(topo_pesquisa, font=("Inter", 14, "bold"), text_color="black", text="Pesquisar:")
+        pesquisa_titulo = ctk.CTkLabel(topo_pesquisa, font=("Inter", 14, "bold"), text_color=TEXTO, text="Pesquisar:")
         pesquisa_titulo.place(x=20, y=-5)
-        self.entrada_pesquisa = ctk.CTkEntry(topo_pesquisa, font=("Inter", 15), width=250, fg_color="white", text_color="black", border_color="black")
+        self.entrada_pesquisa = ctk.CTkEntry(topo_pesquisa, font=("Inter", 15), width=250, fg_color="white", text_color=TEXTO_PLACEHOLDER, border_color="black")
         self.entrada_pesquisa.pack(padx=20, pady=15, side="left")
         
         self.entrada_pesquisa.bind("<Return>", lambda e: buscar_animais(e, self))
@@ -47,7 +79,7 @@ class MenuAnimais(ctk.CTkFrame):
         ]
         
         for texto, comando in botoes:
-            btn = ctk.CTkButton(topo_pesquisa, font=("Inter", 12), text=texto, text_color="black", fg_color=BOTOES, command=comando, width=75)
+            btn = ctk.CTkButton(topo_pesquisa, font=("Inter", 12), text=texto, text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER, command=comando, width=75)
             btn.pack(padx=6, pady=10, side="left")
         
         # Tabela
@@ -58,8 +90,8 @@ class MenuAnimais(ctk.CTkFrame):
         colunas = ("id", "brinco", "nome", "tipo", "sexo", "peso", "data_nasc", "status", "lote")
         self.tabela = ttk.Treeview(meio, columns=colunas, show="headings")
         
-        self.tabela.tag_configure("par", background="#F2F2F2")
-        self.tabela.tag_configure("impar", background="white")
+        self.tabela.tag_configure("par", background=LINHA_PAR)
+        self.tabela.tag_configure("impar", background=LINHA_IMPAR)
         
         self.tabela.heading("id", text="ID")
         self.tabela.heading("brinco", text="Brinco")

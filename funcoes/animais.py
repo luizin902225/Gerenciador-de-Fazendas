@@ -4,13 +4,45 @@ from tkinter import messagebox
 import time
 from tkinter import ttk, messagebox
 
-FUNDO = "#F5F7FA"
-MENU_LATERAL = "#1E293B"
-BOTOES = "#2563EB"
-CARDS = "#FFFFFF"
+FUNDO = "#F8FAFC"              # Fundo geral
+MENU_LATERAL = "#E2E8F0"       # Sidebar
+TOPO = "#FFFFFF"               # Barra superior
+
+CARDS = "#FFFFFF"              # Cards
+CARD_HOVER = "#F1F5F9"
+
 TABELAS = "#FFFFFF"
-HOVER_TABELA = "#EFF6FF"
-TEXTO = "black"
+LINHA_PAR = "#F8FAFC"
+LINHA_IMPAR = "#EEF2F7"
+HOVER_TABELA = "#DBEAFE"
+
+BOTOES = "#2563EB"             # Azul principal
+BOTOES_HOVER = "#1D4ED8"
+
+BOTAO_SUCESSO = "#16A34A"
+BOTAO_SUCESSO_HOVER = "#15803D"
+
+BOTAO_ALERTA = "#D97706"
+BOTAO_ALERTA_HOVER = "#B45309"
+
+BOTAO_ERRO = "#DC2626"
+BOTAO_ERRO_HOVER = "#B91C1C"
+
+INPUT = "#FFFFFF"
+INPUT_BORDA = "#CBD5E1"
+INPUT_FOCUS = "#93C5FD"
+
+TEXTO = "#0F172A"
+TEXTO_SECUNDARIO = "#475569"
+TEXTO_PLACEHOLDER = "#94A3B8"
+
+DIVISORIA = "#E2E8F0"
+
+SUCESSO = "#22C55E"
+ERRO = "#EF4444"
+AVISO = "#F59E0B"
+
+SCROLLBAR = "#CBD5E1"
 
 # *********
 # Cadastros
@@ -28,7 +60,7 @@ def novo_animal(self):
     topo.pack(fill="x")
     resto = ctk.CTkFrame(cadastro, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
-    title = ctk.CTkLabel(topo, text_color="white", font=("Inter", 18, "bold"), text="Cadastro de Animais")
+    title = ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"), text="Cadastro de Animais")
     title.place(relx=0.5, rely=0.5, anchor="center")
     
     titulos = [
@@ -48,7 +80,7 @@ def novo_animal(self):
     ]
     
     for nome, x, y in titulos:
-        ctk.CTkLabel(resto, text=nome, text_color="black", fg_color="transparent", font=("Inter", 16, "bold")).place(x=x, y=y)
+        ctk.CTkLabel(resto, text=nome, text_color=TEXTO, fg_color="transparent", font=("Inter", 16, "bold")).place(x=x, y=y)
         
     campos = {}
     
@@ -63,7 +95,7 @@ def novo_animal(self):
     ]
     
     for largura, x, y, nome in entradas:
-        entry = ctk.CTkEntry(resto, text_color="black", font=("Inter", 14), width=largura, fg_color="DarkGrey")
+        entry = ctk.CTkEntry(resto, text_color=TEXTO, font=("Inter", 14), width=largura, fg_color="DarkGrey")
         entry.place(x=x, y=y)
         campos[nome] = entry
 
@@ -74,7 +106,7 @@ def novo_animal(self):
     ]
     
     for largura, x, y, nome in data_nascimento:
-        entry_data = ctk.CTkEntry(resto, text_color="black", font=("Inter", 14), width=largura, fg_color="DarkGrey")
+        entry_data = ctk.CTkEntry(resto, text_color=TEXTO, font=("Inter", 14), width=largura, fg_color="DarkGrey")
         entry_data.place(x=x, y=y)
         campos[nome] = entry_data
     
@@ -89,7 +121,7 @@ def novo_animal(self):
         opcoes_combo.place(x=x, y=y)
         campos[nome] = opcoes_combo
     
-    ctk.CTkButton(resto, text_color="black", font=("Inter", 14), fg_color=BOTOES, text="Cadastrar",
+    ctk.CTkButton(resto, text_color="black", font=("Inter", 14), fg_color=BOTOES, hover_color=BOTOES_HOVER, text="Cadastrar",
                   command=lambda: cadastrar_animais(cadastro, campos, self)).place(relx=0.5, rely=0.9, anchor="center")
 
 
@@ -177,10 +209,9 @@ def animais_qnt():
     conn.close()
     return contador[0]
 
-
-# *************
+# ***********
 # Informações
-# *************
+# ***********
 
 def informacao_animal(self, dados_animais, instancia_tela):
     info = ctk.CTkToplevel(self)
@@ -194,7 +225,7 @@ def informacao_animal(self, dados_animais, instancia_tela):
     topo.pack(fill="x")
     resto = ctk.CTkFrame(info, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
-    ctk.CTkLabel(topo, text_color="white", font=("Inter", 18, "bold"),
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                  text="Informações do animal").place(relx=0.5, rely=0.5, anchor="center")
     
     titulos = [
@@ -212,7 +243,7 @@ def informacao_animal(self, dados_animais, instancia_tela):
     ]
     
     for titulo, x, y in titulos:
-        ctk.CTkLabel(resto, text=titulo, text_color="black", fg_color="transparent",
+        ctk.CTkLabel(resto, text=titulo, text_color=TEXTO, fg_color="transparent",
                      font=("Inter", 16, "bold")).place(x=x, y=y)
     
     id_animal   = dados_animais[0]
@@ -229,10 +260,10 @@ def informacao_animal(self, dados_animais, instancia_tela):
     observacoes = dados_animais[11]
 
     # Labels atualizáveis (lote e status podem mudar)
-    lote_label = ctk.CTkLabel(resto, text_color="black", font=("Inter", 14), fg_color="transparent", text=lote)
+    lote_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14), fg_color="transparent", text=lote)
     lote_label.place(x=420, y=35)
 
-    status_label = ctk.CTkLabel(resto, text_color="black", font=("Inter", 14), fg_color="transparent", text=status)
+    status_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14), fg_color="transparent", text=status)
     status_label.place(x=20, y=155)
 
     # Demais informações fixas
@@ -248,7 +279,7 @@ def informacao_animal(self, dados_animais, instancia_tela):
         (20, 275, observacoes)
     ]
     for x, y, texto in fixos:
-        ctk.CTkLabel(resto, text_color="black", font=("Inter", 14),
+        ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14),
                      fg_color="transparent", text=texto).place(x=x, y=y)
 
     # ── Linha de botões de ação ──
@@ -266,31 +297,30 @@ def informacao_animal(self, dados_animais, instancia_tela):
     frame_inferior.place(relx=0.5, rely=0.82, anchor="center")
 
     for texto, cmd in botoes_acao:
-        ctk.CTkButton(frame_inferior, text=texto, text_color="white", font=("Inter", 12),
-                        fg_color=cor_acao, hover_color=BOTOES, width=108,
+        ctk.CTkButton(frame_inferior, text=texto, text_color=TEXTO, font=("Inter", 12),
+                        hover_color=cor_acao, width=108, fg_color="#7E8CA0",
                         command=cmd).pack(side="left", padx=4)
     
-    btn_relvacinas = ctk.CTkButton(frame_superior, text="Rel. de Vacinas", text_color="white",
-                                    font=("Inter", 12), fg_color=cor_acao, hover_color=BOTOES,
+    btn_relvacinas = ctk.CTkButton(frame_superior, text="Rel. de Vacinas", text_color=TEXTO,
+                                    font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao, 
                                     width=120, command= lambda: relatorio_vacinas(info, id_animal, nome))
     btn_relvacinas.pack(side="left", padx=4)
     
-    btn_relpesagem = ctk.CTkButton(frame_superior, text="Rel. de Pesagem", text_color="white",
-                                   font=("Inter", 12), fg_color=cor_acao, hover_color=BOTOES,
+    btn_relpesagem = ctk.CTkButton(frame_superior, text="Rel. de Pesagem", text_color=TEXTO,
+                                   font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao,
                                    width=120, command= lambda: relatorio_pesagens(info, id_animal, nome))
     btn_relpesagem.pack(side="left", padx=4)
 
     # ── Botão Concluído ──
-    ctk.CTkButton(resto, text="Concluído", text_color="white", font=("Inter", 14),
-                    fg_color=BOTOES, width=130,
+    ctk.CTkButton(resto, text="Concluído", text_color=TEXTO, font=("Inter", 14),
+                    fg_color="#7E8CA0", hover_color=cor_acao, width=130,
                     command=info.destroy).place(relx=0.5, rely=0.93, anchor="center")
 
     print(f"RELATÓRIO: Informação animal funcionando! Nome: {nome}. Brinco: {brinco}")
 
-
-# *************
+# **********
 # Mudar Lote
-# *************
+# **********
 
 def mudar_lote(pai, id_animal, lote_label, instancia_tela):
     modal = ctk.CTkToplevel(pai)
@@ -302,13 +332,13 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
 
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
-    ctk.CTkLabel(topo, text="Mudar Lote", text_color="white",
+    ctk.CTkLabel(topo, text="Mudar Lote", text_color=TEXTO,
                 font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
 
     resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
     resto.pack(fill="both", expand=True)
 
-    ctk.CTkLabel(resto, text="Selecione o novo lote:", text_color="black",
+    ctk.CTkLabel(resto, text="Selecione o novo lote:", text_color=TEXTO,
                 font=("Inter", 14, "bold")).place(relx=0.5, y=25, anchor="center")
 
     conn = sqlite3.connect("banco.db")
@@ -336,11 +366,10 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
         except Exception as e:
             messagebox.showerror("Erro", f"Não foi possível alterar o lote: {e}")
 
-    ctk.CTkButton(resto, text="Confirmar", text_color="white", fg_color=BOTOES,
+    ctk.CTkButton(resto, text="Confirmar", text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER,
                   font=("Inter", 14), command=confirmar).place(relx=0.5, y=130, anchor="center")
-    ctk.CTkButton(resto, text="Cancelar", text_color="white", fg_color="#64748B",
+    ctk.CTkButton(resto, text="Cancelar", text_color="white", fg_color="#64748B", hover_color=BOTOES_HOVER,
                   font=("Inter", 13), command=modal.destroy).place(relx=0.5, y=178, anchor="center")
-
 
 # *****************
 # Registrar Pesagem
@@ -356,29 +385,29 @@ def registrar_pesagem(pai, id_animal, nome_animal):
 
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
-    ctk.CTkLabel(topo, text="Registrar Pesagem", text_color="white",
+    ctk.CTkLabel(topo, text="Registrar Pesagem", text_color=TEXTO,
                  font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
 
     resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
     resto.pack(fill="both", expand=True)
 
-    ctk.CTkLabel(resto, text=f"Animal: {nome_animal}", text_color="black",
+    ctk.CTkLabel(resto, text=f"Animal: {nome_animal}", text_color=TEXTO,
                  font=("Inter", 13, "bold")).place(x=20, y=15)
 
-    ctk.CTkLabel(resto, text="Peso (KG):", text_color="black",
+    ctk.CTkLabel(resto, text="Peso (KG):", text_color=TEXTO,
                  font=("Inter", 14, "bold")).place(x=20, y=55)
-    entry_peso = ctk.CTkEntry(resto, font=("Inter", 14), width=150, fg_color="DarkGrey", text_color="black")
+    entry_peso = ctk.CTkEntry(resto, font=("Inter", 14), width=150, fg_color="DarkGrey", text_color=TEXTO)
     entry_peso.place(x=20, y=80)
 
-    ctk.CTkLabel(resto, text="Data (DD/MM/AAAA):", text_color="black",
+    ctk.CTkLabel(resto, text="Data (DD/MM/AAAA):", text_color=TEXTO,
                  font=("Inter", 14, "bold")).place(x=20, y=115)
-    entry_data = ctk.CTkEntry(resto, font=("Inter", 14), width=150, fg_color="DarkGrey", text_color="black")
+    entry_data = ctk.CTkEntry(resto, font=("Inter", 14), width=150, fg_color="DarkGrey", text_color=TEXTO)
     entry_data.insert(0, time.strftime("%d/%m/%Y"))
     entry_data.place(x=20, y=140)
 
-    ctk.CTkLabel(resto, text="Observações:", text_color="black",
+    ctk.CTkLabel(resto, text="Observações:", text_color=TEXTO,
                  font=("Inter", 14, "bold")).place(x=20, y=175)
-    entry_obs = ctk.CTkEntry(resto, font=("Inter", 14), width=270, fg_color="DarkGrey", text_color="black")
+    entry_obs = ctk.CTkEntry(resto, font=("Inter", 14), width=270, fg_color="DarkGrey", text_color=TEXTO)
     entry_obs.place(x=20, y=198)
 
     def salvar():
@@ -412,7 +441,7 @@ def registrar_pesagem(pai, id_animal, nome_animal):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao salvar pesagem: {e}")
 
-    ctk.CTkButton(resto, text="Salvar", text_color="white", fg_color=BOTOES,
+    ctk.CTkButton(resto, text="Salvar", text_color="white", fg_color=BOTOES, hover_color=BOTOES_HOVER,
                   font=("Inter", 14), command=salvar).place(relx=0.5, rely=0.93, anchor="center")
 
 def relatorio_pesagens(info, id_animal, nome_animal):
@@ -426,10 +455,10 @@ def relatorio_pesagens(info, id_animal, nome_animal):
     topo.pack(fill="x")
     resto = ctk.CTkFrame(pesagens, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
-    ctk.CTkLabel(topo, text_color="white", font=("Inter", 18, "bold"),
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                     text="Relatório de Pesagens").place(relx=0.5, rely=0.5, anchor="center")
     
-    nome_label = ctk.CTkLabel(resto, text_color="black", font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
+    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
     nome_label.place(x=25, y=-2)
     
     estilo = ttk.Style()
@@ -439,8 +468,8 @@ def relatorio_pesagens(info, id_animal, nome_animal):
     colunas = ("id", "data_pesagem", "peso", "observacoes")
     tabela = ttk.Treeview(resto, columns=colunas, show="headings")
     
-    tabela.tag_configure("par", background="#F2F2F2")
-    tabela.tag_configure("impar", background="white")
+    tabela.tag_configure("par", background=LINHA_PAR)
+    tabela.tag_configure("impar", background=LINHA_IMPAR)
     
     tabela.heading("id", text="ID")
     tabela.heading("data_pesagem", text="Data Pesagem")
@@ -481,9 +510,9 @@ def relatorio_pesagens(info, id_animal, nome_animal):
     
     tabela.pack(fill="both", expand=True, padx=25, pady=20)
 
-# ***************
+# ****************
 # Registrar Vacina
-# ***************
+# ****************
 
 def registrar_vacina(pai, id_animal, nome_animal):
     modal = ctk.CTkToplevel(pai)
@@ -495,13 +524,13 @@ def registrar_vacina(pai, id_animal, nome_animal):
 
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
-    ctk.CTkLabel(topo, text="Registrar Vacina", text_color="white",
+    ctk.CTkLabel(topo, text="Registrar Vacina", text_color=TEXTO,
                     font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
 
     resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
     resto.pack(fill="both", expand=True)
 
-    ctk.CTkLabel(resto, text=f"Animal: {nome_animal}", text_color="black",
+    ctk.CTkLabel(resto, text=f"Animal: {nome_animal}", text_color=TEXTO,
                     font=("Inter", 13, "bold")).place(x=20, y=15)
 
     campos_vacina = [
@@ -514,10 +543,10 @@ def registrar_vacina(pai, id_animal, nome_animal):
 
     campos = {}
     for label, chave, x, y, larg in campos_vacina:
-        ctk.CTkLabel(resto, text=label, text_color="black",
+        ctk.CTkLabel(resto, text=label, text_color=TEXTO,
                         font=("Inter", 13, "bold")).place(x=x, y=y - 20)
         entry = ctk.CTkEntry(resto, font=("Inter", 13), width=larg,
-                                fg_color="DarkGrey", text_color="black")
+                                fg_color="DarkGrey", text_color=TEXTO)
         entry.place(x=x, y=y)
         campos[chave] = entry
 
@@ -565,7 +594,7 @@ def registrar_vacina(pai, id_animal, nome_animal):
         except Exception as e:
             messagebox.showerror("Erro", f"Erro ao salvar vacina: {e}")
 
-    ctk.CTkButton(resto, text="Salvar", text_color="white", fg_color=BOTOES,
+    ctk.CTkButton(resto, text="Salvar", text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER,
                     font=("Inter", 14), command=lambda:salvar(nome_animal)).place(relx=0.5, rely=0.94, anchor="center")
 
 def relatorio_vacinas(info, id_animal, nome_animal):
@@ -579,10 +608,10 @@ def relatorio_vacinas(info, id_animal, nome_animal):
     topo.pack(fill="x")
     resto = ctk.CTkFrame(vacinas, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
-    ctk.CTkLabel(topo, text_color="white", font=("Inter", 18, "bold"),
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                     text="Relatório de Vacinas").place(relx=0.5, rely=0.5, anchor="center")
     
-    nome_label = ctk.CTkLabel(resto, text_color="black", font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
+    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
     nome_label.place(x=25, y=-2)
     
     estilo = ttk.Style()
@@ -592,8 +621,8 @@ def relatorio_vacinas(info, id_animal, nome_animal):
     colunas = ("id", "vacina", "data_aplicacao", "proxima", "responsavel", "observacoes")
     tabela = ttk.Treeview(resto, columns=colunas, show="headings")
     
-    tabela.tag_configure("par", background="#F2F2F2")
-    tabela.tag_configure("impar", background="white")
+    tabela.tag_configure("par", background=LINHA_PAR)
+    tabela.tag_configure("impar", background=LINHA_IMPAR)
     
     tabela.heading("id", text="ID")
     tabela.heading("vacina", text="Vacina")
@@ -653,13 +682,13 @@ def mudar_status(pai, id_animal, status_label, instancia_tela):
 
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
-    ctk.CTkLabel(topo, text="Mudar Status", text_color="white",
+    ctk.CTkLabel(topo, text="Mudar Status", text_color=TEXTO,
                     font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
 
     resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
     resto.pack(fill="both", expand=True)
 
-    ctk.CTkLabel(resto, text="Selecione o novo status:", text_color="black",
+    ctk.CTkLabel(resto, text="Selecione o novo status:", text_color=TEXTO,
                     font=("Inter", 14, "bold")).place(relx=0.5, y=25, anchor="center")
 
     status_opcoes = ["Ativo", "Tratamento", "Seca", "Prenha", "Abate"]
@@ -683,8 +712,7 @@ def mudar_status(pai, id_animal, status_label, instancia_tela):
         except Exception as e:
             messagebox.showerror("Erro", f"Não foi possível alterar o status: {e}")
 
-    ctk.CTkButton(resto, text="Confirmar", text_color="white", fg_color=BOTOES,
+    ctk.CTkButton(resto, text="Confirmar", text_color=TEXTO, fg_color=BOTOES,
                     font=("Inter", 14), command=confirmar).place(relx=0.5, y=130, anchor="center")
-    ctk.CTkButton(resto, text="Cancelar", text_color="white", fg_color="#64748B",
+    ctk.CTkButton(resto, text="Cancelar", text_color=TEXTO, fg_color="#64748B",
                     font=("Inter", 13), command=modal.destroy).place(relx=0.5, y=178, anchor="center")
-    

@@ -6,14 +6,50 @@ from funcoes.animais import *
 
 data = time.strftime("%d/%m/%Y")
 
+# ====
+
 # Paleta de Cores
-FUNDO = "#F5F7FA"
-MENU_LATERAL = "#1E293B"
-BOTOES = "#2563EB"
-CARDS = "#FFFFFF"
+FUNDO = "#F8FAFC"              # Fundo geral
+MENU_LATERAL = "#E2E8F0"       # Sidebar
+TOPO = "#FFFFFF"               # Barra superior
+
+CARDS = "#FFFFFF"              # Cards
+CARD_HOVER = "#F1F5F9"
+
 TABELAS = "#FFFFFF"
-HOVER_TABELA = "#EFF6FF"
-TEXTO = "black"
+LINHA_PAR = "#F8FAFC"
+LINHA_IMPAR = "#EEF2F7"
+HOVER_TABELA = "#DBEAFE"
+
+BOTOES = "#2563EB"             # Azul principal
+BOTOES_HOVER = "#1D4ED8"
+
+BOTAO_SUCESSO = "#16A34A"
+BOTAO_SUCESSO_HOVER = "#15803D"
+
+BOTAO_ALERTA = "#D97706"
+BOTAO_ALERTA_HOVER = "#B45309"
+
+BOTAO_ERRO = "#DC2626"
+BOTAO_ERRO_HOVER = "#B91C1C"
+
+INPUT = "#FFFFFF"
+INPUT_BORDA = "#CBD5E1"
+INPUT_FOCUS = "#93C5FD"
+
+TEXTO = "#0F172A"
+TEXTO_SECUNDARIO = "#475569"
+TEXTO_PLACEHOLDER = "#94A3B8"
+
+DIVISORIA = "#E2E8F0"
+
+SUCESSO = "#22C55E"
+ERRO = "#EF4444"
+AVISO = "#F59E0B"
+
+SCROLLBAR = "#CBD5E1"
+
+# ======
 
 class App(ctk.CTk):
     def __init__(self, conn):
@@ -30,7 +66,7 @@ class App(ctk.CTk):
         self.lateral = ctk.CTkFrame(self, fg_color=MENU_LATERAL, corner_radius=0)
         self.lateral.grid(row=0, column=0, sticky="nsew")
         self.lateral.grid_propagate(False)
-        self.configurar_topo()
+        self.configurar_menu_lateral()
         
         lateral_frame = ctk.CTkFrame(self, fg_color=MENU_LATERAL, corner_radius=0, height=10, width=200)
         lateral_frame.place(x=0, y=830)
@@ -48,11 +84,11 @@ class App(ctk.CTk):
 
         self.mostrar_tela(MenuIniciar)
         
-    def configurar_topo(self):
+    def configurar_menu_lateral(self):
         lateral_titulo = ctk.CTkFrame(self.lateral, fg_color="transparent", height=50, corner_radius=0)
         lateral_titulo.pack(fill="x")
             
-        titulo = ctk.CTkLabel(lateral_titulo, text=" MENU\n PRINCIPAL", font=("Inter", 19, "bold"), text_color="white", fg_color="transparent", bg_color="transparent")
+        titulo = ctk.CTkLabel(lateral_titulo, text=" MENU\n PRINCIPAL", font=("Inter", 19, "bold"), text_color=TEXTO, fg_color="transparent", bg_color="transparent")
         titulo.pack(side="left", padx=38, pady=20, anchor="center")
 
         lateral_botoes = ctk.CTkFrame(self.lateral, fg_color="transparent", corner_radius=0)
@@ -66,7 +102,7 @@ class App(ctk.CTk):
             ("Estoque", lambda: print("Estoque"), MENU_LATERAL, "w"),
             ("Plantações", lambda: print("Plantações"), MENU_LATERAL, "w"),
             ("Produtores Rurais", lambda: print("Produtores"), MENU_LATERAL, "w"),
-            ("Sair", lambda: self.destroy(), "red", "center")
+            ("Sair", lambda: self.destroy(), BOTAO_ERRO, "center")
         ]
             
         for texto, comando, cor, lado in botoes:
@@ -76,13 +112,13 @@ class App(ctk.CTk):
                                 width=70,
                                 height=50,
                                 fg_color=cor,
-                                hover_color=BOTOES,
-                                text_color="white",
+                                hover_color=SCROLLBAR,
+                                text_color=TEXTO,
                                 command=comando,
                                 anchor=lado)
             btn.pack(padx=10, pady=10, fill="x") 
             
-        marcacao_data = ctk.CTkLabel(self.lateral, text=f"{data}", font=("Inter", 18, "bold"), bg_color="transparent", text_color="white")
+        marcacao_data = ctk.CTkLabel(self.lateral, text=f"{data}", font=("Inter", 18, "bold"), bg_color="transparent", text_color=TEXTO)
         marcacao_data.pack(side="bottom", pady=15)    
         
         print('RELATÓRIO: Menu Lateral funcionando corretamente.')
@@ -115,5 +151,5 @@ class MenuIniciar(ctk.CTkFrame):
         
         quantidade_animais = animais_qnt()
         
-        label_rel = ctk.CTkLabel(rel_animais, text_color="black", text=f"Quantidade\nanimais:\n{quantidade_animais}", font=("Inter", 24, "bold"))
+        label_rel = ctk.CTkLabel(rel_animais, text_color=TEXTO, text=f"Quantidade\nanimais:\n{quantidade_animais}", font=("Inter", 24, "bold"))
         label_rel.place(relx=0.5, rely=0.5, anchor="center")
