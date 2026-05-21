@@ -64,9 +64,9 @@ class MenuAnimais(ctk.CTkFrame):
         
         # Topo Pesquisa
         pesquisa_titulo = ctk.CTkLabel(topo_pesquisa, font=("Inter", 14, "bold"), text_color=TEXTO, text="Pesquisar:")
-        pesquisa_titulo.place(x=20, y=-5)
-        self.entrada_pesquisa = ctk.CTkEntry(topo_pesquisa, font=("Inter", 15), width=250, fg_color="white", text_color=TEXTO_PLACEHOLDER, border_color="black")
-        self.entrada_pesquisa.pack(padx=20, pady=15, side="left")
+        pesquisa_titulo.place(x=22, y=-2)
+        self.entrada_pesquisa = ctk.CTkEntry(topo_pesquisa, font=("Inter", 15), width=250, fg_color="white", text_color=TEXTO, border_color="black")
+        self.entrada_pesquisa.pack(padx=20, pady=25, side="left")
         
         self.entrada_pesquisa.bind("<Return>", lambda e: buscar_animais(e, self))
         self.entrada_pesquisa.bind("<KeyRelease>", lambda e: buscar_animais(e, self))
@@ -85,7 +85,6 @@ class MenuAnimais(ctk.CTkFrame):
         # Tabela
         estilo = ttk.Style()
         estilo.theme_use("clam")
-
         
         colunas = ("id", "brinco", "nome", "tipo", "sexo", "peso", "data_nasc", "status", "lote")
         self.tabela = ttk.Treeview(meio, columns=colunas, show="headings")
@@ -115,7 +114,7 @@ class MenuAnimais(ctk.CTkFrame):
         
         atualizar_tabela_animais(self, "")
         
-        self.tabela.pack(fill="both", expand=True, padx=25, pady=20)
+        self.tabela.pack(fill="both", expand=True, padx=20, pady=10)
     
     def abrir_informacoes_animais(self):
         selecao = self.tabela.selection()
