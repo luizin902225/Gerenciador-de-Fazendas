@@ -156,3 +156,98 @@ def cadastrar_maquina(cadastro, campos, instancia_tela): # Função que cadastra
     print(f"Maquina cadastrada com sucesso!") # Dá o log de sucesso
     atualizar_tabela_maquinas(instancia_tela, "")
     cadastro.destroy()
+
+def informacao_maquina(self, dados_maquinas, instancia_tela):
+    info = ctk.CTkToplevel(self)
+    info.title("Informações da Máquina")
+    info.geometry("450x450")
+    info.attributes("-topmost", True)
+    info.grab_set()
+    info.configure(fg_color=FUNDO)
+    
+    topo = ctk.CTkFrame(info, fg_color=MENU_LATERAL, height=50, corner_radius=0)
+    topo.pack(fill="x")
+    resto = ctk.CTkFrame(info, corner_radius=0, fg_color="transparent")
+    resto.pack(fill="both", expand=True)
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
+                 text="Informações da Máquina").place(relx=0.5, rely=0.5, anchor="center")
+    
+    titulos = [
+        ("Nome:",         20,  10),
+        ("Placa:",        300, 10),
+        ("Fabricante:",   20,  70),
+        ("Modelo:",       160, 70),
+        ("Horas de Uso:", 300, 70),
+        ("Tipo:",         20,  130),
+        ("Status:",       220, 130),
+        ("Observações:",  20,  190),
+        ("Ano:",          220, 190),
+    ]
+    
+    for titulo, x, y in titulos:
+        ctk.CTkLabel(resto, text=titulo, text_color=TEXTO, fg_color="transparent",
+                     font=("Inter", 16, "bold")).place(x=x, y=y)
+    
+    nome       = dados_maquinas[1]
+    tipo       = dados_maquinas[2]
+    modelo     = dados_maquinas[3]
+    fabricante = dados_maquinas[4]
+    ano        = dados_maquinas[5]
+    placa      = dados_maquinas[6]
+    horasdeuso = dados_maquinas[7]
+    status     = dados_maquinas[8]
+    obs        = dados_maquinas[9]
+    
+    # Label atualizável
+    status_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14),
+                                fg_color="transparent", text=status)
+    status_label.place(x=220, y=155)
+
+    # Demais informações fixas
+    fixos = [
+        (20,  35,  nome),
+        (300, 35,  placa),
+        (20,  95,  fabricante),
+        (160, 95,  modelo),
+        (300, 95,  str(horasdeuso)),
+        (20,  155, tipo),
+        (20,  215, str(obs)),
+        (220, 215, str(ano)),        
+    ]
+    for x, y, texto in fixos:
+        ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14),
+                     fg_color="transparent", text=texto).place(x=x, y=y)
+
+    # ── Linha de botões de ação ──
+    cor_acao = "#475569"
+    
+    
+    """botoes_acao = [
+        ("Mudar Lote",    lambda: mudar_lote(info, id_animal, lote_label, instancia_tela)),
+        ("Reg. Pesagem",  lambda: registrar_pesagem(info, id_animal, nome)),
+        ("Reg. Vacina",   lambda: registrar_vacina(info, id_animal, nome)),
+        ("Mudar Status",  lambda: mudar_status(info, id_animal, status_label, instancia_tela)),
+    ]"""
+
+    """for texto, cmd in botoes_acao:
+        ctk.CTkButton(frame_inferior, text=texto, text_color=TEXTO, font=("Inter", 12),
+                        hover_color=cor_acao, width=108, fg_color="#7E8CA0",
+                        command=cmd).pack(side="left", padx=4)
+    
+    btn_relvacinas = ctk.CTkButton(frame_superior, text="Rel. de Vacinas", text_color=TEXTO,
+                                    font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao, 
+                                    width=120, command= lambda: relatorio_vacinas(info, id_animal, nome))
+    btn_relvacinas.pack(side="left", padx=4)
+    
+    btn_relpesagem = ctk.CTkButton(frame_superior, text="Rel. de Pesagem", text_color=TEXTO,
+                                   font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao,
+                                   width=120, command= lambda: relatorio_pesagens(info, id_animal, nome))
+    btn_relpesagem.pack(side="left", padx=4)"""
+
+    # ── Botão Concluído ──
+    ctk.CTkButton(resto, text="Concluído", text_color=TEXTO, font=("Inter", 14),
+                    fg_color="#7E8CA0", hover_color=cor_acao, width=130,
+                    command=info.destroy).place(relx=0.5, rely=0.93, anchor="center")
+
+    print(f"RELATÓRIO: Informação animal funcionando! Nome: {nome}. ")
+

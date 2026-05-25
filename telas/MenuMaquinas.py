@@ -1,7 +1,7 @@
 import sqlite3
 import customtkinter as ctk
 from tkinter import ttk, messagebox
-from funcoes.maquinas import atualizar_tabela_maquinas, buscar_maquinas, novo_maquina
+from funcoes.maquinas import atualizar_tabela_maquinas, buscar_maquinas, novo_maquina, informacao_maquina
 
 # Paleta de Cores
 FUNDO = "#F8FAFC"              # Fundo geral
@@ -72,8 +72,8 @@ class MenuMaquinas(ctk.CTkFrame):
         botoes = [
             ("Pesquisar", lambda: buscar_maquinas(None, self)), 
             ("Cadastrar", lambda: novo_maquina(self)),
-            ("Informações", lambda: print('informações')),
-            ("Excluir", lambda: print('excluir'))
+            ("Informações", lambda: self.abrir_informacoes_maquinas()),
+            ("Excluir", lambda: self.deletar_maquina())
         ]
         
         for texto, comando in botoes:
@@ -115,3 +115,64 @@ class MenuMaquinas(ctk.CTkFrame):
         atualizar_tabela_maquinas(self, "")
         
         self.tabela.pack(fill="both", expand=True, padx=20, pady=10)
+        
+    def abrir_informacoes_maquinas(self):
+        selecao = self.tabela.selection()
+        if not selecao:
+            messagebox.showwarning("Aviso", "Selecione alguma maquina para ver as informações!")
+            return
+        
+        dados_maquinas = self.tabela.item(selecao[0])['values']
+        id_maquinas = dados_maquinas[0]
+        
+        conn = sqlite3.connect("banco.db")
+        cursor = conn.cursor()
+        cursor.execute("""SELECT 
+                        id,
+                        nome,
+                        tipo,
+                        modelo,
+                        fabricante,
+                        ano,
+                        placa,
+                        horas_uso,
+                        status,
+                        observacoes
+                        FROM maquinas WHERE id=?""", (id_maquinas,))
+        dados_maquina = cursor.fetchone()
+        
+        conn.close()
+        
+        if dados_maquina is None:
+            messagebox.showinfo("Aviso", "Maquina não encontrada!")
+            return
+    
+        informacao_maquina(self, dados_maquina, self)
+    
+    def deletar_maquina(self): # Função que deleta uma maquina 
+        selecao = self.tabela.selection()
+        
+        if not selecao:
+            messagebox.showwarning("Aviso", "Por favor, selecione uma maquina para excluir")
+            return
+
+        valores = self.tabela.item(selecao)['values']
+        id_maquina  = valores[0]
+        nome = valores[1]
+        
+        confirmar = messagebox.askyesno("Confirmar Exclusão", f"Deseja realmente deletar a maquina:\n{nome}?")
+        
+        if confirmar:
+            try:
+                cursor = self.conn.cursor()
+                cursor.execute("DELETE FROM maquinas WHERE id=?", (id_maquina,))
+                self.conn.commit()
+                
+                #  Remove da interface e avisa o usuário
+                self.tabela.delete(selecao)
+                messagebox.showinfo("Sucesso", f"Máquina removido com sucesso!\n{nome}")
+                print(f'Nome: {nome}.\n Excluído do banco com sucesso!')
+                
+            except Exception as e:
+                messagebox.showerror("Erro", f"Não foi possível deletar do banco de dados: {e}")
+                

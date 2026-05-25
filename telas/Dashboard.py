@@ -99,8 +99,8 @@ class App(ctk.CTk):
             ("Menu Principal", lambda: self.mostrar_tela(MenuIniciar), MENU_LATERAL, "w"),
             ("Animais", lambda: self.mostrar_tela(MenuAnimais), MENU_LATERAL, "w"),
             ("Máquinas", lambda: self.mostrar_tela(MenuMaquinas), MENU_LATERAL, "w"),
-            ("Funcionários", lambda: print("Funcionários"), MENU_LATERAL, "w"),
             ("Estoque", lambda: print("Estoque"), MENU_LATERAL, "w"),
+            ("Funcionários", lambda: print("Funcionários"), MENU_LATERAL, "w"),
             ("Plantações", lambda: print("Plantações"), MENU_LATERAL, "w"),
             ("Produtores Rurais", lambda: print("Produtores"), MENU_LATERAL, "w"),
             ("Sair", lambda: self.destroy(), BOTAO_ERRO, "center")
