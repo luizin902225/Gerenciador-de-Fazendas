@@ -1,8 +1,7 @@
 import sqlite3
 import customtkinter as ctk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import time
-from tkinter import ttk, messagebox
 
 FUNDO = "#F8FAFC"              # Fundo geral
 MENU_LATERAL = "#E2E8F0"       # Sidebar

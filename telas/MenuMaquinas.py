@@ -1,7 +1,7 @@
 import sqlite3
 import customtkinter as ctk
 from tkinter import ttk, messagebox
-from funcoes.maquinas import atualizar_tabela_maquinas, buscar_maquinas
+from funcoes.maquinas import atualizar_tabela_maquinas, buscar_maquinas, novo_maquina
 
 # Paleta de Cores
 FUNDO = "#F8FAFC"              # Fundo geral
@@ -69,12 +69,23 @@ class MenuMaquinas(ctk.CTkFrame):
         self.entrada_pesquisa = ctk.CTkEntry(topo_pesquisa, font=("Inter", 15), width=250, fg_color="white", text_color=TEXTO, border_color="black")
         self.entrada_pesquisa.pack(padx=20, pady=25, side="left")
         
+        botoes = [
+            ("Pesquisar", lambda: buscar_maquinas(None, self)), 
+            ("Cadastrar", lambda: novo_maquina(self)),
+            ("Informações", lambda: print('informações')),
+            ("Excluir", lambda: print('excluir'))
+        ]
+        
+        for texto, comando in botoes:
+            btn = ctk.CTkButton(topo_pesquisa, font=("Inter", 12), text=texto, text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER, command=comando, width=75)
+            btn.pack(padx=6, pady=10, side="left")
+        
         self.entrada_pesquisa.bind("<Return>", lambda e: buscar_maquinas(e, self))
         self.entrada_pesquisa.bind("<KeyRelease>", lambda e: buscar_maquinas(e, self))
         
         style = ttk.Style()
         style.theme_use("clam")
-    
+        
         colunas = ("id", "nome", "tipo", "status", "modelo", "fabricante", "ano", "placa", "horas_uso")
         self.tabela = ttk.Treeview(meio, columns=colunas, show="headings")
         
@@ -90,7 +101,6 @@ class MenuMaquinas(ctk.CTkFrame):
         self.tabela.heading("ano", text="Ano")
         self.tabela.heading("placa", text="Placa")
         self.tabela.heading("horas_uso", text="Horas Uso")
-        
         
         self.tabela.column("id", width=40, anchor="center", stretch=False)
         self.tabela.column("nome", width=200, minwidth=150, anchor="center")
