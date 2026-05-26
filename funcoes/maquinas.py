@@ -188,7 +188,8 @@ def informacao_maquina(self, dados_maquinas, instancia_tela):
         ctk.CTkLabel(resto, text=titulo, text_color=TEXTO, fg_color="transparent",
                      font=("Inter", 16, "bold")).place(x=x, y=y)
     
-    nome       = dados_maquinas[1]
+    id_maquina = dados_maquinas[0]
+    nome_maquina       = dados_maquinas[1]
     tipo       = dados_maquinas[2]
     modelo     = dados_maquinas[3]
     fabricante = dados_maquinas[4]
@@ -205,7 +206,7 @@ def informacao_maquina(self, dados_maquinas, instancia_tela):
 
     # Demais informações fixas
     fixos = [
-        (20,  35,  nome),
+        (20,  35,  nome_maquina),
         (300, 35,  placa),
         (20,  95,  fabricante),
         (160, 95,  modelo),
@@ -218,36 +219,234 @@ def informacao_maquina(self, dados_maquinas, instancia_tela):
         ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14),
                      fg_color="transparent", text=texto).place(x=x, y=y)
 
-    # ── Linha de botões de ação ──
+    frame_inferior = ctk.CTkFrame(resto, fg_color="transparent")
+    frame_inferior.place(relx=0.5, rely=0.8, anchor="center")
+    
     cor_acao = "#475569"
     
-    
-    """botoes_acao = [
-        ("Mudar Lote",    lambda: mudar_lote(info, id_animal, lote_label, instancia_tela)),
-        ("Reg. Pesagem",  lambda: registrar_pesagem(info, id_animal, nome)),
-        ("Reg. Vacina",   lambda: registrar_vacina(info, id_animal, nome)),
-        ("Mudar Status",  lambda: mudar_status(info, id_animal, status_label, instancia_tela)),
-    ]"""
-
-    """for texto, cmd in botoes_acao:
-        ctk.CTkButton(frame_inferior, text=texto, text_color=TEXTO, font=("Inter", 12),
-                        hover_color=cor_acao, width=108, fg_color="#7E8CA0",
-                        command=cmd).pack(side="left", padx=4)
-    
-    btn_relvacinas = ctk.CTkButton(frame_superior, text="Rel. de Vacinas", text_color=TEXTO,
-                                    font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao, 
-                                    width=120, command= lambda: relatorio_vacinas(info, id_animal, nome))
-    btn_relvacinas.pack(side="left", padx=4)
-    
-    btn_relpesagem = ctk.CTkButton(frame_superior, text="Rel. de Pesagem", text_color=TEXTO,
-                                   font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao,
-                                   width=120, command= lambda: relatorio_pesagens(info, id_animal, nome))
-    btn_relpesagem.pack(side="left", padx=4)"""
-
+    btns = [
+        ("Relatório Manut.", lambda: relatorio_manutencao(info, id_maquina, nome_maquina)),
+        ("Registrar Manut.", lambda: registrar_manutencao(info, id_maquina, nome_maquina)),
+        ("Status", lambda: status_maquina(info, id_maquina, status_label, instancia_tela))
+    ]
+    for nome, comando in btns:
+        btn = ctk.CTkButton(frame_inferior, text=nome, command= comando, font=("Inter", 14), fg_color=cor_acao)
+        btn.pack(side="left", padx=4)
+        
     # ── Botão Concluído ──
     ctk.CTkButton(resto, text="Concluído", text_color=TEXTO, font=("Inter", 14),
                     fg_color="#7E8CA0", hover_color=cor_acao, width=130,
                     command=info.destroy).place(relx=0.5, rely=0.93, anchor="center")
 
-    print(f"RELATÓRIO: Informação animal funcionando! Nome: {nome}. ")
+    print(f"RELATÓRIO: Informação máquinas funcionando!")
+    
 
+    # Função que registra uma manutenção
+def registrar_manutencao(pai, id_maquina, nome_maquina):
+    modal = ctk.CTkToplevel(pai)
+    modal.title("Registrar Vacina")
+    modal.geometry("340x550")
+    modal.attributes("-topmost", True)
+    modal.grab_set()
+    modal.configure(fg_color=FUNDO)
+
+    topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
+    topo.pack(fill="x")
+    ctk.CTkLabel(topo, text="Registrar Manutenção", text_color=TEXTO,
+                    font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
+
+    resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
+    resto.pack(fill="both", expand=True)
+
+    ctk.CTkLabel(resto, text=f"Máquina: {nome_maquina}", text_color=TEXTO,
+                    font=("Inter", 13, "bold")).place(x=20, y=15)
+
+    campos_vacina = [
+        ("Tipo da Manutenção ( Preventiva ou Corretiva ):", "Tipo", 20,  55,  300),
+        ("Responsável:", "Responsavel", 20, 115,  200),
+        ("Data da Manutenção (DD/MM/AAAA):", "DataManutencao", 20, 175, 150),
+        ("Próxima Manutenção (DD/MM/AAAA):", "ProximaManutencao",   20, 235, 150)
+    ]
+
+    campos = {}
+    for label, chave, x, y, larg in campos_vacina:
+        ctk.CTkLabel(resto, text=label, text_color=TEXTO,
+                        font=("Inter", 13, "bold")).place(x=x, y=y - 20)
+        entry = ctk.CTkEntry(resto, font=("Inter", 13), width=larg,
+                                fg_color="DarkGrey", text_color=TEXTO)
+        entry.place(x=x, y=y)
+        campos[chave] = entry
+        
+    ctk.CTkLabel(resto, font=("Inter", 13, "bold"), text_color=TEXTO, text="Descrição").place(x=20, y=275)
+    desc = ctk.CTkTextbox(resto, font=("Inter", 13), fg_color="DarkGrey", text_color=TEXTO,
+                            width=300, height=150)
+    desc.place(x=20, y=295)
+    campos["Descricao"] = desc
+    campos["DataManutencao"].insert(0, time.strftime("%d/%m/%Y"))
+
+    def salvar(nome_maquina):
+        tipo       = campos["Tipo"].get().strip()
+        responsavel  = campos["Responsavel"].get().strip()
+        data_raw     = campos["DataManutencao"].get().strip()
+        proxima_raw  = campos["ProximaManutencao"].get().strip()
+        descricao    = campos["Descricao"].get("1.0", "end").strip()
+
+        if not tipo:
+            messagebox.showwarning("Aviso", "O tipo da manutenção é obrigatório!")
+            return
+        
+        if not data_raw:
+            messagebox.showwarning("Aviso", "A data da manutenção é obrigatória")
+            return
+
+        def converter_data(texto):
+            try:
+                d, m, a = texto.split("/")
+                return f"{a}-{m.zfill(2)}-{d.zfill(2)}"
+            except:
+                return None
+
+        data_db    = converter_data(data_raw)
+        proxima_db = converter_data(proxima_raw) if proxima_raw else "Sem data certa"
+
+        if not data_db:
+            messagebox.showerror("Erro", "Data de manutenção inválida! Use DD/MM/AAAA.")
+            return
+
+        try:
+            with sqlite3.connect("banco.db") as conn:
+                conn.execute("""
+                    INSERT INTO manutencoes (maquina_id, tipo_manutencao, data_manutencao, proxima_manutencao, descricao, responsavel)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (id_maquina, tipo, data_db, proxima_db, descricao, responsavel))
+                conn.commit()
+            messagebox.showinfo("Sucesso", f"Manutencção {tipo} registrada!")
+            print(f"RELATÓRIO: Manutenção {tipo} realizada!")
+            modal.destroy()
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao salvar manutenção: {e}")
+
+    ctk.CTkButton(resto, text="Salvar", text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER,
+                    font=("Inter", 14), command=lambda:salvar(nome_maquina)).place(relx=0.5, rely=0.94, anchor="center")
+
+
+    # Função que mostra os relatórios de uma função
+def relatorio_manutencao(info, id_maquina, nome_maquina):
+    manutencoes = ctk.CTkToplevel(info)
+    manutencoes.geometry("800x560")
+    manutencoes.attributes("-topmost", True)
+    manutencoes.grab_set()
+    manutencoes.configure(fg_color=FUNDO)
+    
+    topo = ctk.CTkFrame(manutencoes, fg_color=MENU_LATERAL, height=50, corner_radius=0)
+    topo.pack(fill="x")
+    resto = ctk.CTkFrame(manutencoes, corner_radius=0, fg_color="transparent")
+    resto.pack(fill="both", expand=True)
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
+                    text="Relatório de Manutenções").place(relx=0.5, rely=0.5, anchor="center")
+    
+    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome da máquina: {nome_maquina}")
+    nome_label.place(x=25, y=-2)
+    
+    estilo = ttk.Style()
+    estilo.theme_use("clam")
+
+    
+    colunas = ("id", "tipo", "data_man", "proxima_man", "responsavel", "descricao")
+    tabela = ttk.Treeview(resto, columns=colunas, show="headings")
+    
+    tabela.tag_configure("par", background=LINHA_PAR)
+    tabela.tag_configure("impar", background=LINHA_IMPAR)
+    
+    tabela.heading("id", text="ID")
+    tabela.heading("tipo", text="Tipo")
+    tabela.heading("data_man", text="Data Manutenção")
+    tabela.heading("proxima_man", text="Data da Próxima")
+    tabela.heading("responsavel", text="Responsável")
+    tabela.heading("descricao", text="Descrição")
+        
+    tabela.column("id", width=40, anchor="center", stretch=False)
+    tabela.column("tipo", width=75, minwidth=150, anchor="center")
+    tabela.column("data_man", width=75, anchor="center")
+    tabela.column("proxima_man", width=75, minwidth=150, anchor="center")
+    tabela.column("responsavel", width=75, anchor="center")
+    tabela.column("descricao", width=175, anchor="center")
+    
+    def atualizar_tabela_maquinas(instancia_tela):
+        for item in tabela.get_children():
+            tabela.delete(item)
+        dados = buscar_manutencao_db()
+        for i, linha in enumerate(dados):
+            cor = "par" if i % 2 == 0 else "impar"
+            tabela.insert("", "end", values=linha, tags=(cor,))
+
+    def buscar_manutencao_db():
+        conn = sqlite3.connect("banco.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT 
+                id,
+                tipo_manutencao,
+                data_manutencao,
+                proxima_manutencao,
+                responsavel,
+                descricao
+            FROM manutencoes
+            WHERE maquina_id = ?
+            ORDER BY data_manutencao DESC""", (id_maquina,))
+        dados = cursor.fetchall()
+        conn.close()
+        return dados
+    
+    atualizar_tabela_maquinas(tabela)
+    
+    tabela.pack(fill="both", expand=True, padx=25, pady=20)
+
+def status_maquina(pai, id_animal, lote_label, instancia_tela): # Função que muda o status da maquina ( Ativa, Manutenção, Encostada )
+    modal = ctk.CTkToplevel(pai)
+    modal.title("Mudar Status")
+    modal.geometry("300x260")
+    modal.attributes("-topmost", True)
+    modal.grab_set()
+    modal.configure(fg_color=FUNDO)
+
+    topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
+    topo.pack(fill="x")
+    ctk.CTkLabel(topo, text="Mudar Status", text_color=TEXTO,
+                font=("Inter", 16, "bold")).place(relx=0.5, rely=0.5, anchor="center")
+
+    resto = ctk.CTkFrame(modal, fg_color="transparent", corner_radius=0)
+    resto.pack(fill="both", expand=True)
+
+    ctk.CTkLabel(resto, text="Selecione o novo status:", text_color=TEXTO,
+                font=("Inter", 14, "bold")).place(relx=0.5, y=25, anchor="center")
+
+    conn = sqlite3.connect("banco.db")
+    lotes = [r[0] for r in conn.execute(
+        "SELECT DISTINCT status FROM maquinas ORDER BY status"
+    ).fetchall()]
+    conn.close()
+
+    combo = ctk.CTkComboBox(resto, values=lotes, width=180, font=("Inter", 14))
+    combo.place(relx=0.5, y=70, anchor="center")
+
+    def confirmar():
+        novo = combo.get().strip()
+        if not novo:
+            messagebox.showwarning("Aviso", "Selecione um status válido!")
+            return
+        try:
+            with sqlite3.connect("banco.db") as conn:
+                conn.execute("UPDATE maquinas SET status = ? WHERE id = ?", (novo, id_animal))
+                conn.commit()
+            lote_label.configure(text=novo)
+            atualizar_tabela_maquinas(instancia_tela, "")
+            messagebox.showinfo("Sucesso", f"Status alterado para {novo}!")
+            modal.destroy()
+        except Exception as e:
+            messagebox.showerror("Erro", f"Não foi possível alterar o status: {e}")
+
+    ctk.CTkButton(resto, text="Confirmar", text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER,
+                  font=("Inter", 14), command=confirmar).place(relx=0.5, y=130, anchor="center")
+    ctk.CTkButton(resto, text="Cancelar", text_color="white", fg_color="#64748B", hover_color=BOTOES_HOVER,
+                  font=("Inter", 13), command=modal.destroy).place(relx=0.5, y=178, anchor="center")
