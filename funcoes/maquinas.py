@@ -44,6 +44,14 @@ AVISO = "#F59E0B"
 
 SCROLLBAR = "#CBD5E1"
 
+def maquinas_qnt():
+    conn = sqlite3.connect("banco.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(id) FROM maquinas")
+    contador = cursor.fetchone()
+    conn.close()
+    return contador[0]
+
 # Procurar no banco =>
 def buscar_maquinas(event, instancia_tela):
     termo = instancia_tela.entrada_pesquisa.get()
@@ -340,17 +348,22 @@ def relatorio_manutencao(info, id_maquina, nome_maquina):
     
     topo = ctk.CTkFrame(manutencoes, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
+    meio = ctk.CTkFrame(manutencoes, corner_radius=0, fg_color="transparent", height=40)
+    meio.pack(fill="x")
     resto = ctk.CTkFrame(manutencoes, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
+    
     ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                     text="Relatório de Manutenções").place(relx=0.5, rely=0.5, anchor="center")
     
-    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome da máquina: {nome_maquina}")
-    nome_label.place(x=25, y=-2)
+    nome_label = ctk.CTkLabel(meio, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome da máquina: {nome_maquina}")
+    nome_label.pack(padx=20, side="left", pady=10)
+    
+    #btn_info = ctk.CTkButton(meio, text_color=TEXTO, font=("Inter", 14, "bold"), text="Informações")
+    #btn_info.pack(side="left", padx=10)
     
     estilo = ttk.Style()
     estilo.theme_use("clam")
-
     
     colunas = ("id", "tipo", "data_man", "proxima_man", "responsavel", "descricao")
     tabela = ttk.Treeview(resto, columns=colunas, show="headings")

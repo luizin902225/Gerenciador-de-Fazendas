@@ -2,8 +2,14 @@ import customtkinter as ctk
 import sqlite3
 import time
 from telas.MenuAnimais import MenuAnimais
-from telas.MenuMaquinas import *
+from telas.MenuMaquinas import MenuMaquinas
+from telas.MenuEstoque import MenuEstoque
+from telas.MenuFuncionarios import MenuFuncionarios
 from funcoes.animais import *
+from funcoes.maquinas import *
+from funcoes.estoque import *
+from funcoes.funcionarios import *
+
 
 data = time.strftime("%d/%m/%Y")
 
@@ -78,7 +84,7 @@ class App(ctk.CTk):
         self.meio.grid_columnconfigure(0, weight=1)  
         
         self.frames = {}
-        for F in (MenuIniciar, MenuAnimais, MenuMaquinas):
+        for F in (MenuIniciar, MenuAnimais, MenuMaquinas, MenuEstoque, MenuFuncionarios):
             frame = F(self.meio, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -99,8 +105,8 @@ class App(ctk.CTk):
             ("Menu Principal", lambda: self.mostrar_tela(MenuIniciar), MENU_LATERAL, "w"),
             ("Animais", lambda: self.mostrar_tela(MenuAnimais), MENU_LATERAL, "w"),
             ("Máquinas", lambda: self.mostrar_tela(MenuMaquinas), MENU_LATERAL, "w"),
-            ("Estoque", lambda: print("Estoque"), MENU_LATERAL, "w"),
-            ("Funcionários", lambda: print("Funcionários"), MENU_LATERAL, "w"),
+            ("Estoque", lambda: self.mostrar_tela(MenuEstoque), MENU_LATERAL, "w"),
+            ("Funcionários", lambda: self.mostrar_tela(MenuFuncionarios), MENU_LATERAL, "w"),
             ("Plantações", lambda: print("Plantações"), MENU_LATERAL, "w"),
             ("Produtores Rurais", lambda: print("Produtores"), MENU_LATERAL, "w"),
             ("Sair", lambda: self.destroy(), BOTAO_ERRO, "center")
@@ -153,4 +159,12 @@ class MenuIniciar(ctk.CTkFrame):
         quantidade_animais = animais_qnt()
         
         label_rel = ctk.CTkLabel(rel_animais, text_color=TEXTO, text=f"Quantidade\nanimais:\n{quantidade_animais}", font=("Inter", 24, "bold"))
+        label_rel.place(relx=0.5, rely=0.5, anchor="center")
+        
+        rel_animais = ctk.CTkFrame(self, fg_color="white", height=100, width=150)
+        rel_animais.pack(padx=20, pady=20, side="top", anchor="nw")
+        
+        quantidade_maquinas = maquinas_qnt()
+        
+        label_rel = ctk.CTkLabel(rel_animais, text_color=TEXTO, text=f"Quantidade\nmaquinas:\n{quantidade_maquinas}", font=("Inter", 24, "bold"))
         label_rel.place(relx=0.5, rely=0.5, anchor="center")
