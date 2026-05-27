@@ -5,6 +5,7 @@ from telas.MenuAnimais import MenuAnimais
 from telas.MenuMaquinas import MenuMaquinas
 from telas.MenuEstoque import MenuEstoque
 from telas.MenuFuncionarios import MenuFuncionarios
+from telas.MenuDashboard import MenuDashboard
 from funcoes.animais import *
 from funcoes.maquinas import *
 from funcoes.estoque import *
@@ -84,7 +85,7 @@ class App(ctk.CTk):
         self.meio.grid_columnconfigure(0, weight=1)  
         
         self.frames = {}
-        for F in (MenuIniciar, MenuAnimais, MenuMaquinas, MenuEstoque, MenuFuncionarios):
+        for F in (MenuIniciar, MenuAnimais, MenuMaquinas, MenuEstoque, MenuFuncionarios, MenuDashboard):
             frame = F(self.meio, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -103,6 +104,7 @@ class App(ctk.CTk):
             
         botoes = [
             ("Menu Principal", lambda: self.mostrar_tela(MenuIniciar), MENU_LATERAL, "w"),
+            ("Dashboard", lambda: self.mostrar_tela(MenuDashboard), MENU_LATERAL, "w"),
             ("Animais", lambda: self.mostrar_tela(MenuAnimais), MENU_LATERAL, "w"),
             ("Máquinas", lambda: self.mostrar_tela(MenuMaquinas), MENU_LATERAL, "w"),
             ("Estoque", lambda: self.mostrar_tela(MenuEstoque), MENU_LATERAL, "w"),
@@ -147,24 +149,6 @@ class MenuIniciar(ctk.CTkFrame):
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=0)
         
-        titulo_central = ctk.CTkLabel(self, text="GERENCIAMENTO DA FAZENDA\n v0.1", font=("Segoe UI", 50, "bold"), text_color=TEXTO, fg_color="transparent")
+        titulo_central = ctk.CTkLabel(self, text="GERENCIAMENTO DA FAZENDA\n v1.0", font=("Segoe UI", 50, "bold"), text_color=TEXTO, fg_color="transparent")
         titulo_central.place(relx=0.5, rely=0.5, anchor="center")
         print('RELATÓRIO: Tela inicial funcionando.')
-        
-        # Relatório
-        
-        rel_animais = ctk.CTkFrame(self, fg_color="white", height=100, width=150)
-        rel_animais.pack(padx=20, pady=20, side="top", anchor="nw")
-        
-        quantidade_animais = animais_qnt()
-        
-        label_rel = ctk.CTkLabel(rel_animais, text_color=TEXTO, text=f"Quantidade\nanimais:\n{quantidade_animais}", font=("Inter", 24, "bold"))
-        label_rel.place(relx=0.5, rely=0.5, anchor="center")
-        
-        rel_animais = ctk.CTkFrame(self, fg_color="white", height=100, width=150)
-        rel_animais.pack(padx=20, pady=20, side="top", anchor="nw")
-        
-        quantidade_maquinas = maquinas_qnt()
-        
-        label_rel = ctk.CTkLabel(rel_animais, text_color=TEXTO, text=f"Quantidade\nmaquinas:\n{quantidade_maquinas}", font=("Inter", 24, "bold"))
-        label_rel.place(relx=0.5, rely=0.5, anchor="center")

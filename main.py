@@ -1,5 +1,5 @@
 from banco.database import conectar, criar_tabelas
-from telas.Dashboard import *
+from telas.Iniciar import *
 from telas.login import *
 
 def main():
