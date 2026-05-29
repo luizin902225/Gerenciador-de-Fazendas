@@ -1,15 +1,17 @@
 import customtkinter as ctk
 import sqlite3
 import time
-from telas.MenuAnimais import MenuAnimais
-from telas.MenuMaquinas import MenuMaquinas
-from telas.MenuEstoque import MenuEstoque
-from telas.MenuFuncionarios import MenuFuncionarios
-from telas.MenuDashboard import MenuDashboard
+from PIL import Image
+from Telas.Menus.MenuAnimais import MenuAnimais
+from Telas.Menus.MenuMaquinas import MenuMaquinas
+from Telas.Menus.MenuEstoque import MenuEstoque
+from Telas.Menus.MenuFuncionarios import MenuFuncionarios
+from Telas.Menus.PerfilFazenda import PerfildaFazenda
 from funcoes.animais import *
 from funcoes.maquinas import *
 from funcoes.estoque import *
 from funcoes.funcionarios import *
+from Telas.Secundarias.Lotes import cadastro_lotes
 
 
 data = time.strftime("%d/%m/%Y")
@@ -62,10 +64,11 @@ SCROLLBAR = "#CBD5E1"
 class App(ctk.CTk):
     def __init__(self, conn):
         super().__init__()
-        self.title("Gerenciamento de Fazenda - v0.1")
+        self.title("Gerenciamento de Fazenda - v1.0")
         self.geometry("1300x800")
         self.configure(fg_color=FUNDO)
         self.conn = conn
+        self.iconbitmap("image.ico")
         
         self.grid_columnconfigure(1, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -85,7 +88,7 @@ class App(ctk.CTk):
         self.meio.grid_columnconfigure(0, weight=1)  
         
         self.frames = {}
-        for F in (MenuIniciar, MenuAnimais, MenuMaquinas, MenuEstoque, MenuFuncionarios, MenuDashboard):
+        for F in (MenuIniciar, MenuAnimais, MenuMaquinas, MenuEstoque, MenuFuncionarios, PerfildaFazenda):
             frame = F(self.meio, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -104,14 +107,15 @@ class App(ctk.CTk):
             
         botoes = [
             ("Menu Principal", lambda: self.mostrar_tela(MenuIniciar), MENU_LATERAL, "w"),
-            ("Dashboard", lambda: self.mostrar_tela(MenuDashboard), MENU_LATERAL, "w"),
             ("Animais", lambda: self.mostrar_tela(MenuAnimais), MENU_LATERAL, "w"),
             ("Máquinas", lambda: self.mostrar_tela(MenuMaquinas), MENU_LATERAL, "w"),
             ("Estoque", lambda: self.mostrar_tela(MenuEstoque), MENU_LATERAL, "w"),
             ("Funcionários", lambda: self.mostrar_tela(MenuFuncionarios), MENU_LATERAL, "w"),
             ("Plantações", lambda: print("Plantações"), MENU_LATERAL, "w"),
             ("Produtores Rurais", lambda: print("Produtores"), MENU_LATERAL, "w"),
+            ("Fazenda", lambda: self.mostrar_tela(PerfildaFazenda), MENU_LATERAL, "w"),
             ("Sair", lambda: self.destroy(), BOTAO_ERRO, "center")
+            
         ]
             
         for texto, comando, cor, lado in botoes:
@@ -142,13 +146,31 @@ class MenuIniciar(ctk.CTkFrame):
         self.controller = controller
         self.conn = controller.conn
         self.configure(fg_color="#D3D3D3")
-        
         self.configure(fg_color="transparent")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(1, weight=1)
-        self.grid_rowconfigure(2, weight=0)
+        
+        # Ícones 
+        icone_configuração = ctk.CTkImage(light_image=Image.open("imagens/icone_configuracoes.png"), size=(100, 100))
+        icone_fazendeiro = ctk.CTkImage(light_image=Image.open("imagens/icone_fazendeiro.png"), size=(100, 100))
+        icone_pessoal = ctk.CTkImage(light_image=Image.open("imagens/icone_pessoal.png"), size=(100, 100))
+        icone_lote = ctk.CTkImage(light_image=Image.open("imagens/icone_lote.png"), size=(100, 100))
+        icone_fazenda = ctk.CTkImage(light_image=Image.open("imagens/imagem_fazenda.ico"), size=(100, 100))
         
         titulo_central = ctk.CTkLabel(self, text="GERENCIAMENTO DA FAZENDA\n v1.0", font=("Segoe UI", 50, "bold"), text_color=TEXTO, fg_color="transparent")
-        titulo_central.place(relx=0.5, rely=0.5, anchor="center")
-        print('RELATÓRIO: Tela inicial funcionando.')
+        titulo_central.place(relx=0.5, y=80, anchor="center")
+        
+        frame_bts = ctk.CTkFrame(self, fg_color="transparent")
+        frame_bts.pack(anchor="center", expand=True)
+        
+        btn_inicio = [
+            ("Configurações", icone_configuração, lambda:print("Configurações")),
+            ("Pessoal", icone_pessoal, lambda:print("Pessoais")),
+            ("Fazendeiros", icone_fazendeiro, lambda:print("Fazendeiros")),
+            ("Lote", icone_lote, lambda: cadastro_lotes(self))
+        ]
+        
+        for nome, foto, comando in btn_inicio:
+            btn_linha1 = ctk.CTkButton(frame_bts, fg_color="transparent", text_color=TEXTO, text=nome, image=foto, 
+                                        font=("Inter", 14, "bold"), compound="top", command=comando, hover_color=TEXTO_PLACEHOLDER)
+            btn_linha1.pack(side="left", padx=5)
+        
+        print('RELATÓRIO: Tela Inicial funcionando.')

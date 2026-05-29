@@ -115,6 +115,8 @@ class MenuAnimais(ctk.CTkFrame):
         atualizar_tabela_animais(self, "")
         
         self.tabela.pack(fill="both", expand=True, padx=20, pady=10)
+        
+        print("RELATÓRIO: Tela de Animais carregada.")
     
     def abrir_informacoes_animais(self):
         selecao = self.tabela.selection()
@@ -136,7 +138,7 @@ class MenuAnimais(ctk.CTkFrame):
                         raca,
                         strftime('%d/%m/%Y', data_nascimento) as data_nascimento,
                         printf('%.2f KG', peso_atual) as peso_atual,
-                        lote,
+                        lote_id,
                         status,
                         origem,
                         observacoes

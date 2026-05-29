@@ -54,11 +54,13 @@ def criar_tabelas(conn):
         raca TEXT,
         data_nascimento TEXT,
         peso_atual REAL,
-        lote TEXT,
+        lote_id INTEGER,
         status TEXT,
         origem TEXT,
         observacoes TEXT,
-        ativo INTEGER DEFAULT 1
+        ativo INTEGER DEFAULT 1,
+        
+        FOREIGN KEY(lote_id) REFERENCES lote(id)
     )""") # Tipo ( Leite ou Corte )
     
     # Tabela de pesagens relacionais
@@ -196,4 +198,24 @@ def criar_tabelas(conn):
 
         FOREIGN KEY(usuario_id) REFERENCES usuarios(id)
     )""")
+    
+    cursor.execute("""CREATE TABLE IF NOT EXISTS lote(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL UNIQUE,
+        tamanho REAL,
+        localizacao TEXT,
+        descricao TEXT,
+        ativo INTEGER DEFAULT 1
+    )""")
+    
+    cursor.execute("""CREATE TABLE IF NOT EXISTS fazenda(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome_fazenda TEXT NOT NULL UNIQUE,
+        tamanho REAL,
+        endereco TEXT,
+        data_fundacao TEXT,
+        dono TEXT,
+        logo_fazenda TEXT
+    )""")
+    
     conn.commit()

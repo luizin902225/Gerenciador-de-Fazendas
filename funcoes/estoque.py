@@ -91,7 +91,8 @@ def novo_item_estoque(self):
     cadastro.attributes("-topmost", True)
     cadastro.grab_set()
     cadastro.configure(fg_color=FUNDO)
-
+    cadastro.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(cadastro, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     resto = ctk.CTkFrame(cadastro, corner_radius=0, fg_color="transparent")
@@ -182,7 +183,8 @@ def informacao_item_estoque(self, dados_item, instancia_tela):
     info.attributes("-topmost", True)
     info.grab_set()
     info.configure(fg_color=FUNDO)
-
+    info.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(info, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     meio = ctk.CTkFrame(info, fg_color="transparent", corner_radius=0, height=40)
@@ -259,7 +261,8 @@ def registrar_movimentacao(pai, id_item, nome_item, tipo, instancia_tela):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     cor_topo = BOTAO_SUCESSO if tipo == "Entrada" else BOTAO_ERRO
 
     topo = ctk.CTkFrame(modal, fg_color=cor_topo, height=45, corner_radius=0)
@@ -364,7 +367,8 @@ def historico_movimentacoes(pai, id_item, nome_item):
     hist.attributes("-topmost", True)
     hist.grab_set()
     hist.configure(fg_color=FUNDO)
-
+    hist.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(hist, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     meio = ctk.CTkFrame(hist, fg_color="transparent", corner_radius=0, height=35)

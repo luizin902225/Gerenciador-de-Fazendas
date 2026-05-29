@@ -116,6 +116,8 @@ class MenuMaquinas(ctk.CTkFrame):
         
         self.tabela.pack(fill="both", expand=True, padx=20, pady=10)
         
+        print("RELATÓRIO: Tela de Máquinas carregada")
+        
     def abrir_informacoes_maquinas(self):
         selecao = self.tabela.selection()
         if not selecao:

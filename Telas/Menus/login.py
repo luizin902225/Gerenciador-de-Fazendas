@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import sqlite3
 from tkinter import messagebox
-from telas.Iniciar import App
+from Telas.Menus.Iniciar import App
 # Paleta de Cores
 
 FUNDO_LOGIN = "#0F172A"          # Fundo principal escuro

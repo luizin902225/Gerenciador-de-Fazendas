@@ -89,6 +89,7 @@ def novo_maquina(self): # Cria a Janela de cadastro de maquinas
     cadastro.title("Nova Máquina")
     cadastro.attributes("-topmost", True)
     cadastro.configure(fg_color=FUNDO)
+    cadastro.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(cadastro, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
@@ -172,6 +173,7 @@ def informacao_maquina(self, dados_maquinas, instancia_tela):
     info.attributes("-topmost", True)
     info.grab_set()
     info.configure(fg_color=FUNDO)
+    info.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(info, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
@@ -257,6 +259,7 @@ def registrar_manutencao(pai, id_maquina, nome_maquina):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
+    modal.iconbitmap("image.ico")
 
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
@@ -345,6 +348,7 @@ def relatorio_manutencao(info, id_maquina, nome_maquina):
     manutencoes.attributes("-topmost", True)
     manutencoes.grab_set()
     manutencoes.configure(fg_color=FUNDO)
+    manutencoes.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(manutencoes, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
@@ -422,7 +426,8 @@ def status_maquina(pai, id_animal, lote_label, instancia_tela): # Função que m
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
     ctk.CTkLabel(topo, text="Mudar Status", text_color=TEXTO,

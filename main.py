@@ -1,6 +1,6 @@
 from banco.database import conectar, criar_tabelas
-from telas.Iniciar import *
-from telas.login import *
+from Telas.Menus.Iniciar import *
+from Telas.Menus.login import *
 
 def main():
     conn = conectar()

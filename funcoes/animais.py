@@ -54,6 +54,7 @@ def novo_animal(self):
     cadastro.attributes("-topmost", True)
     cadastro.grab_set()
     cadastro.configure(fg_color=FUNDO)
+    cadastro.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(cadastro, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
@@ -86,7 +87,6 @@ def novo_animal(self):
     entradas = [
         (250, 20, 35, "Nome"),
         (75, 300, 35, "Brinco"),
-        (75, 420, 35, "Lote"),
         (75, 20, 95, "Peso Atual"),
         (75, 160, 95, "Raça"),
         (150, 20, 155, "Origem"),
@@ -97,6 +97,14 @@ def novo_animal(self):
         entry = ctk.CTkEntry(resto, text_color=TEXTO, font=("Inter", 14), width=largura, fg_color="DarkGrey")
         entry.place(x=x, y=y)
         campos[nome] = entry
+    
+    conn = sqlite3.connect("banco.db")
+    lotes_db = [r[0] for r in conn.execute("SELECT nome FROM lote WHERE ativo=1 ORDER BY nome").fetchall()]
+    conn.close()
+
+    combo_lote = ctk.CTkComboBox(resto, values=lotes_db, width=75)
+    combo_lote.place(x=420, y=35)
+    campos["Lote"] = combo_lote
 
     data_nascimento = [
         (75, 300, 95, "Dia nasc"),
@@ -144,19 +152,19 @@ def buscar_animais_db(nome):
     conn = sqlite3.connect("banco.db")
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT 
-            id, brinco, nome, tipo, sexo,
-            printf('%.2f KG', peso_atual) as peso_atual,
-            strftime('%d/%m/%Y', data_nascimento) as data_nascimento,
-            status, lote
-        FROM animais
-        WHERE nome LIKE ?
-        AND ativo = 1
-        ORDER BY CASE
-            WHEN tipo = "Leite" THEN 1
-            WHEN tipo = "Corte" THEN 2
-        END, nome ASC
-    """, (f'%{nome}%',))
+    SELECT 
+        a.id, a.brinco, a.nome, a.tipo, a.sexo,
+        printf('%.2f KG', a.peso_atual) as peso_atual,
+        strftime('%d/%m/%Y', a.data_nascimento) as data_nascimento,
+        a.status, COALESCE(l.nome, 'Sem lote') as lote
+    FROM animais a LEFT JOIN lote l ON a.lote_id = l.id
+    WHERE a.nome LIKE ?
+    AND a.ativo = 1
+    ORDER BY CASE
+        WHEN a.tipo = 'Leite' THEN 1
+        WHEN a.tipo = 'Corte' THEN 2
+    END, a.nome ASC
+""", (f'%{nome}%',))
     dados = cursor.fetchall()
     conn.close()
     return dados
@@ -186,11 +194,18 @@ def cadastrar_animais(cadastro, campos, instancia_tela):
     
     try:
         with sqlite3.connect("banco.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT id FROM lote WHERE nome = ?", (dados["Lote"],))
+            resultado = cursor.fetchone()
+            if not resultado:
+                messagebox.showerror("Erro", "Lote não encontrado!")
+                return
+            lote_id = resultado[0]
             conn.cursor().execute("""
-                INSERT INTO animais(nome, brinco, lote, peso_atual, data_nascimento,
+                INSERT INTO animais(nome, brinco, lote_id, peso_atual, data_nascimento,
                                     raca, origem, status, sexo, tipo, observacoes)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (dados["Nome"], dados["Brinco"], dados["Lote"], peso, data_nascimento,
+            """, (dados["Nome"], dados["Brinco"], lote_id, peso, data_nascimento,
                   dados["Raça"], dados["Origem"], dados["Status"], dados["Sexo"],
                   dados["Tipo"], dados["Observações"]))
             conn.commit()
@@ -199,6 +214,8 @@ def cadastrar_animais(cadastro, campos, instancia_tela):
         cadastro.destroy()
     except sqlite3.IntegrityError:
         messagebox.showerror("Erro", f"Brinco {dados['Brinco']} já cadastrado!\nPor favor, coloque outro")
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro: {str(e)}. Contate o suporte.")
 
 def animais_qnt():
     conn = sqlite3.connect("banco.db")
@@ -215,15 +232,20 @@ def animais_qnt():
 def informacao_animal(self, dados_animais, instancia_tela):
     info = ctk.CTkToplevel(self)
     info.title("Informações do animal")
-    info.geometry("520x560")
+    info.geometry("520x500")
     info.attributes("-topmost", True)
     info.grab_set()
     info.configure(fg_color=FUNDO)
+    info.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(info, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
+    frame_inferior = ctk.CTkFrame(info, fg_color="transparent", height=75, corner_radius=0)
+    frame_inferior.pack(fill="x")
     resto = ctk.CTkFrame(info, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
+    
+    
     ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                  text="Informações do animal").place(relx=0.5, rely=0.5, anchor="center")
     
@@ -285,30 +307,15 @@ def informacao_animal(self, dados_animais, instancia_tela):
     cor_acao = "#475569"
     botoes_acao = [
         ("Mudar Lote",    lambda: mudar_lote(info, id_animal, lote_label, instancia_tela)),
-        ("Reg. Pesagem",  lambda: registrar_pesagem(info, id_animal, nome)),
-        ("Reg. Vacina",   lambda: registrar_vacina(info, id_animal, nome)),
+        ("Pesagem",  lambda: relatorio_pesagens(info, id_animal, nome)),
+        ("Vacinas",   lambda: relatorio_vacinas(info, id_animal, nome)),
         ("Mudar Status",  lambda: mudar_status(info, id_animal, status_label, instancia_tela)),
     ]
     
-    frame_superior = ctk.CTkFrame(resto, fg_color="transparent")
-    frame_superior.place(relx=0.5, rely=0.74, anchor="center")
-    frame_inferior = ctk.CTkFrame(resto, fg_color="transparent")
-    frame_inferior.place(relx=0.5, rely=0.82, anchor="center")
-
     for texto, cmd in botoes_acao:
         ctk.CTkButton(frame_inferior, text=texto, text_color=TEXTO, font=("Inter", 12),
                         hover_color=cor_acao, width=108, fg_color="#7E8CA0",
-                        command=cmd).pack(side="left", padx=4)
-    
-    btn_relvacinas = ctk.CTkButton(frame_superior, text="Rel. de Vacinas", text_color=TEXTO,
-                                    font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao, 
-                                    width=120, command= lambda: relatorio_vacinas(info, id_animal, nome))
-    btn_relvacinas.pack(side="left", padx=4)
-    
-    btn_relpesagem = ctk.CTkButton(frame_superior, text="Rel. de Pesagem", text_color=TEXTO,
-                                   font=("Inter", 12), fg_color="#7E8CA0", hover_color=cor_acao,
-                                   width=120, command= lambda: relatorio_pesagens(info, id_animal, nome))
-    btn_relpesagem.pack(side="left", padx=4)
+                        command=cmd).pack(side="left", padx=5)
 
     # ── Botão Concluído ──
     ctk.CTkButton(resto, text="Concluído", text_color=TEXTO, font=("Inter", 14),
@@ -328,7 +335,8 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
     ctk.CTkLabel(topo, text="Mudar Lote", text_color=TEXTO,
@@ -341,8 +349,8 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
                 font=("Inter", 14, "bold")).place(relx=0.5, y=25, anchor="center")
 
     conn = sqlite3.connect("banco.db")
-    lotes = [r[0] for r in conn.execute(
-        "SELECT DISTINCT lote FROM animais WHERE lote IS NOT NULL AND ativo = 1 ORDER BY lote"
+    lotes = [r[1] for r in conn.execute(
+        "SELECT id, nome FROM lote WHERE ativo = 1 ORDER BY nome"
     ).fetchall()]
     conn.close()
 
@@ -356,7 +364,10 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
             return
         try:
             with sqlite3.connect("banco.db") as conn:
-                conn.execute("UPDATE animais SET lote = ? WHERE id = ?", (novo, id_animal))
+                cursor = conn.cursor()
+                cursor.execute("SELECT id FROM lote WHERE nome = ?", (novo,))
+                novo_id = cursor.fetchone()[0]
+                conn.execute("UPDATE animais SET lote_id = ? WHERE id = ?", (novo_id, id_animal))
                 conn.commit()
             lote_label.configure(text=novo)
             atualizar_tabela_animais(instancia_tela, "")
@@ -364,6 +375,7 @@ def mudar_lote(pai, id_animal, lote_label, instancia_tela):
             modal.destroy()
         except Exception as e:
             messagebox.showerror("Erro", f"Não foi possível alterar o lote: {e}")
+            print(f'Erro: {e}')
 
     ctk.CTkButton(resto, text="Confirmar", text_color=TEXTO, fg_color=BOTOES, hover_color=BOTOES_HOVER,
                   font=("Inter", 14), command=confirmar).place(relx=0.5, y=130, anchor="center")
@@ -381,7 +393,8 @@ def registrar_pesagem(pai, id_animal, nome_animal):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
     ctk.CTkLabel(topo, text="Registrar Pesagem", text_color=TEXTO,
@@ -449,16 +462,23 @@ def relatorio_pesagens(info, id_animal, nome_animal):
     pesagens.attributes("-topmost", True)
     pesagens.grab_set()
     pesagens.configure(fg_color=FUNDO)
+    pesagens.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(pesagens, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
+    meio = ctk.CTkFrame(pesagens, corner_radius=0, fg_color="transparent", height=40)
+    meio.pack(fill="x")
     resto = ctk.CTkFrame(pesagens, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
+    
     ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                     text="Relatório de Pesagens").place(relx=0.5, rely=0.5, anchor="center")
     
-    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
-    nome_label.place(x=25, y=-2)
+    nome_label = ctk.CTkLabel(meio, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
+    nome_label.pack(side="left", padx=20, pady=5)
+    
+    btn_regvacina = ctk.CTkButton(meio, text_color=TEXTO, font=("Inter", 14), text="Registrar pesagem", command= lambda: registrar_pesagem(info, id_animal, nome_animal))
+    btn_regvacina.pack(side="left", padx=10, pady=5)
     
     estilo = ttk.Style()
     estilo.theme_use("clam")
@@ -520,7 +540,8 @@ def registrar_vacina(pai, id_animal, nome_animal):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
     ctk.CTkLabel(topo, text="Registrar Vacina", text_color=TEXTO,
@@ -602,16 +623,23 @@ def relatorio_vacinas(info, id_animal, nome_animal):
     vacinas.attributes("-topmost", True)
     vacinas.grab_set()
     vacinas.configure(fg_color=FUNDO)
+    vacinas.iconbitmap("image.ico")
     
     topo = ctk.CTkFrame(vacinas, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
+    meio = ctk.CTkFrame(vacinas, corner_radius=0, fg_color="transparent", height=40)
+    meio.pack(fill="x")
     resto = ctk.CTkFrame(vacinas, corner_radius=0, fg_color="transparent")
     resto.pack(fill="both", expand=True)
+    
     ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
                     text="Relatório de Vacinas").place(relx=0.5, rely=0.5, anchor="center")
     
-    nome_label = ctk.CTkLabel(resto, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
-    nome_label.place(x=25, y=-2)
+    nome_label = ctk.CTkLabel(meio, text_color=TEXTO, font=("Inter", 14, "bold"), text=f"Nome do animal: {nome_animal}")
+    nome_label.pack(side="left", padx=20, pady=5)
+    
+    btn_regvacina = ctk.CTkButton(meio, text_color=TEXTO, font=("Inter", 14), text="Registrar vacina", command= lambda: registrar_vacina(info, id_animal, nome_animal))
+    btn_regvacina.pack(side="left", padx=10, pady=5)
     
     estilo = ttk.Style()
     estilo.theme_use("clam")
@@ -678,7 +706,8 @@ def mudar_status(pai, id_animal, status_label, instancia_tela):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=45, corner_radius=0)
     topo.pack(fill="x")
     ctk.CTkLabel(topo, text="Mudar Status", text_color=TEXTO,

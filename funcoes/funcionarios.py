@@ -73,7 +73,8 @@ def novo_funcionario(self):
     cadastro.attributes("-topmost", True)
     cadastro.grab_set()
     cadastro.configure(fg_color=FUNDO)
-
+    cadastro.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(cadastro, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     resto = ctk.CTkFrame(cadastro, corner_radius=0, fg_color="transparent")
@@ -164,7 +165,8 @@ def informacao_funcionario(self, dados_func, instancia_tela):
     info.attributes("-topmost", True)
     info.grab_set()
     info.configure(fg_color=FUNDO)
-
+    info.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(info, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     meio = ctk.CTkFrame(info, fg_color="transparent", corner_radius=0, height=40)
@@ -220,7 +222,8 @@ def editar_funcionario(pai, id_func, dados_func, instancia_tela):
     modal.attributes("-topmost", True)
     modal.grab_set()
     modal.configure(fg_color=FUNDO)
-
+    modal.iconbitmap("image.ico")
+    
     topo = ctk.CTkFrame(modal, fg_color=MENU_LATERAL, height=50, corner_radius=0)
     topo.pack(fill="x")
     resto = ctk.CTkFrame(modal, corner_radius=0, fg_color="transparent")
