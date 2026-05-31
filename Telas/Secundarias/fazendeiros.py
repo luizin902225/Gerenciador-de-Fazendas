@@ -1,0 +1,177 @@
+import sqlite3
+import customtkinter as ctk
+from tkinter import ttk, messagebox
+
+# Paleta de Cores
+FUNDO = "#F8FAFC"
+MENU_LATERAL = "#E2E8F0"
+TOPO = "#FFFFFF"
+CARDS = "#FFFFFF"
+CARD_HOVER = "#F1F5F9"
+TABELAS = "#FFFFFF"
+LINHA_PAR = "#F8FAFC"
+LINHA_IMPAR = "#EEF2F7"
+BOTOES = "#2563EB"
+BOTOES_HOVER = "#1D4ED8"
+TEXTO = "#0F172A"
+TEXTO_SECUNDARIO = "#475569"
+TEXTO_PLACEHOLDER = "#94A3B8"
+
+
+def produtor_rural(self):
+    fazendeiro = ctk.CTkToplevel(self)
+    fazendeiro.title("Produtor Rural")
+    fazendeiro.geometry("1100x520")
+    fazendeiro.attributes("-topmost", True)
+    fazendeiro.grab_set()
+    fazendeiro.iconbitmap("imagens/icone_fazendeiro.png")
+    
+    topo = ctk.CTkFrame(fazendeiro, fg_color=MENU_LATERAL, height=50, corner_radius=0)
+    topo.pack(fill="x")
+    resto = ctk.CTkFrame(fazendeiro, corner_radius=0, fg_color="white")
+    resto.pack(fill="both", expand=True)
+    ctk.CTkLabel(topo, text_color=TEXTO, font=("Inter", 18, "bold"),
+                    text="Produtor Rural").place(relx=0.5, rely=0.5, anchor="center")
+    
+    titulos = [
+        # Esquerda
+        ("Nome:", 20, 20),
+        ("Pessoa: (PJ) ou (MEI)", 20, 80),
+        ("Registro Mapa:", 20, 140),
+        ("Data de Nascimento:", 20, 200),
+        ("Telefone:", 20, 260),
+        ("Celular:", 20, 320),
+        # Direita
+        ("CPF/CNPJ:", 300, 20),
+        ("RG:", 300, 80),
+        ("E-mail:", 300, 140),
+        ("Endereço:", 300, 200)
+    ]
+    
+    for nome, x, y in titulos:
+        ctk.CTkLabel(resto, text=nome, text_color=TEXTO, font=("Inter", 15, "bold")).place(x=x, y=y)
+    
+    campos = {}
+    
+    entrys = [
+        ("Nome", 20, 20),
+        ("Pessoa", 20, 80),
+        ("Registro", 20, 140),
+        ("DataNasc", 20, 200),
+        ("Telefone", 20, 260),
+        ("Celular", 20, 320),
+        # Direita
+        ("CPF/CNPJ", 300, 20),
+        ("RG", 300, 80),
+        ("E-mail", 300, 140),
+        ("Endereco", 300, 200)
+    ]
+    
+    for nome, x, y in entrys:
+        entry = ctk.CTkEntry(resto, text_color="white", font=("Inter", 14), width=225)
+        entry.place(x=x, y=y+30)
+        campos[nome] = entry
+    
+    estilo = ttk.Style()
+    estilo.theme_use("clam")
+        
+    colunas = ("id", "nome", "celular", "email", "endereco")
+    self.tabela = ttk.Treeview(resto, columns=colunas, show="headings", height=15)
+        
+    self.tabela.tag_configure("par", background=LINHA_PAR)
+    self.tabela.tag_configure("impar", background=LINHA_IMPAR)
+        
+    self.tabela.heading("id", text="ID")
+    self.tabela.heading("nome", text="Nome")
+    self.tabela.heading("celular", text="Celular")
+    self.tabela.heading("email", text="E-mail")
+    self.tabela.heading("endereco", text="Endereço")
+        
+    self.tabela.column("id", width=40, anchor="center", stretch=False)
+    self.tabela.column("nome", width=120, anchor="center", stretch=False)
+    self.tabela.column("celular", width=80, anchor="center")
+    self.tabela.column("email", width=120, anchor="center")
+    self.tabela.column("endereco", width=100, anchor="center")
+    
+    self.tabela.place(x=580, y=30)
+    
+    atualizar_tabela_fazendeiros(self, "")
+    
+    btn_cadastrar = ctk.CTkButton(resto, text="Cadastrar", text_color="black",
+                                    fg_color=BOTOES, hover_color=BOTOES_HOVER, 
+                                    command= lambda: salvar(fazendeiro, campos))
+    btn_cadastrar.place(relx=0.35, rely=0.9, anchor="center")
+    
+    btn_excluir = ctk.CTkButton(resto, text="Excluir", text_color="black",
+                                fg_color=BOTOES, hover_color=BOTOES_HOVER,
+                                command= lambda: deletar_item(self))
+    btn_excluir.place(relx=0.7, rely=0.9, anchor="center")
+    
+    print("RELATÓRIO: Tela de Fazendeiro carregado.")
+    
+
+def salvar(janela, campos):
+    dados = {campo: entry.get().strip() for campo, entry in campos.items()}
+    
+    try:
+        conn = sqlite3.connect("banco.db")
+        cursor = conn.cursor()
+        
+        cursor.execute("""INSERT INTO produtor_rural(nome, pessoa, registro_mapa, data_nasc, telefone, celular, cpf_cnpj, rg, email, endereco) 
+                        VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (dados["Nome"], dados["Pessoa"], dados["Registro"], dados["DataNasc"], dados["Telefone"],
+                                                    dados["Celular"], dados["CPF/CNPJ"], dados["RG"], dados["E-mail"], dados["Endereco"]))
+        conn.commit()
+        conn.close()
+        messagebox.showinfo("Sucesso", f"Usuário {dados["Nome"]}, cadastrado com sucesso!")
+        print(f"Produtor {dados["Nome"]}, cadastrado com sucesso!")
+        janela.destroy()
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro: {str(e)} \nContate o suporte")
+        print(f"Erro {e}.")
+
+def deletar_item(self):
+        selecao = self.tabela.selection()
+        if not selecao:
+            messagebox.showwarning("Aviso", "Selecione um produtor para excluir!")
+            return
+
+        valores = self.tabela.item(selecao)['values']
+        id_usuario = valores[0]
+        nome    = valores[1]
+
+        confirmar = messagebox.askyesno(
+            "Confirmar Exclusão",
+            f"Deseja realmente excluir o produtor:\n{nome}?"
+        )
+
+        if confirmar:
+            try:
+                cursor = self.conn.cursor()
+                cursor.execute("DELETE FROM produtor WHERE id = ?", (id_usuario,))
+                self.conn.commit()
+                self.tabela.delete(selecao)
+                messagebox.showinfo("Sucesso", f"Produtor removido com sucesso!\n{nome}")
+                print(f"RELATÓRIO: Produtor '{nome}' excluído do banco.")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Não foi possível excluir: {e}.\nContate o suporte")
+
+def atualizar_tabela_fazendeiros(instancia_tela, termo=""):
+    for item in instancia_tela.tabela.get_children():
+        instancia_tela.tabela.delete(item)
+    dados = buscar_fazendeiros(termo)
+    for i, linha in enumerate(dados):
+        cor = "par" if i % 2 == 0 else "impar"
+        instancia_tela.tabela.insert("", "end", values=linha, tags=(cor,))
+
+def buscar_fazendeiros(nome): # Busca os usuarios no banco de dados
+    conn = sqlite3.connect("banco.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+    SELECT 
+        id, nome, celular, email, endereco
+    FROM produtor_rural
+    ORDER BY nome ASC
+""")
+    dados = cursor.fetchall()
+    conn.close()
+    return dados

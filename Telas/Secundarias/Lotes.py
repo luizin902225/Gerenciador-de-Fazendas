@@ -32,6 +32,13 @@ ERRO = "#EF4444"
 AVISO = "#F59E0B"
 SCROLLBAR = "#CBD5E1"
 
+def qnt_lotes():
+    conn = sqlite3.connect("banco.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(id) FROM lote WHERE ativo = 1")
+    contador = cursor.fetchone()
+    conn.close()
+    return contador[0]
 
 def cadastro_lotes(self):
     lotes = ctk.CTkToplevel(self)

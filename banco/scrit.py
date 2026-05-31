@@ -52,6 +52,7 @@ cursor.execute("""INSERT INTO estoque (nome, categoria, unidade, quantidade, est
 
 cursor.execute("""INSERT INTO estoque (nome, categoria, unidade, quantidade, estoque_minimo, localizacao, observacoes) VALUES
   ('Óleo Lubrificante 15W40', 'Insumo', 'L', 45.0, 10.0, 'Galpão de Máquinas', NULL)""")
+
 # FINALIZAÇÃO
 # =========================
 conn.commit()
